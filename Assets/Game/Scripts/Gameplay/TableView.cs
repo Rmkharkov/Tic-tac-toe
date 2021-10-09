@@ -1,15 +1,8 @@
 namespace Game.Gameplay
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using UnityEngine;
 
-    public interface ITableView
-    {
-        Transform CellsParent { get; }
-    }
-
-    public class TableView : MonoBehaviour, ITableView
+    public class TableView : MonoBehaviour
     {
         [SerializeField]
         private Transform       _cellsParent;

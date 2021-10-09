@@ -1,6 +1,6 @@
 namespace Game.Cells
 {
-    public enum ECellContent
+    public enum ECellState
     {
         None,
 
