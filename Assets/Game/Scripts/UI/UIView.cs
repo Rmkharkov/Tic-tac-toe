@@ -8,6 +8,8 @@ namespace Game.UI
     {
         GameObject NoMovesScreen { get; }
         GameObject WinnerScreen { get; }
+        GameObject CrossWait { get; }
+        GameObject CircleWait { get; }
         Button RestartButton { get; }
         Text WinnerDescriptionText { get; }
     }
@@ -21,6 +23,9 @@ namespace Game.UI
 
         [SerializeField]
         private GameObject      _winnerScreen;
+
+        [SerializeField]
+        private GameObject      _crossWait, _circleWait;
 
         [SerializeField]
         private Button          _restartButton;
@@ -37,6 +42,10 @@ namespace Game.UI
         public Text WinnerDescriptionText => _winnerDescriptionText;
 
         public Button RestartButton => _restartButton;
+
+        public GameObject CrossWait => _crossWait;
+
+        public GameObject CircleWait => _circleWait;
 
 #endregion
 

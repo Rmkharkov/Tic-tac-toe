@@ -13,14 +13,18 @@ namespace Game.Gameplay
         {
             crossPlayerState = true;
             TableController.Instance.CreateTable();
+            UIController.Instance.ChangePlayer(CurrentCellMark);
         }
 
-        public static ECellState CurrentCellMark => crossPlayerState ? ECellState.Circle : ECellState.Cross;
+        public static ECellState CurrentCellMark => crossPlayerState ? ECellState.Cross : ECellState.Circle;
 
         public static void CellTapped(CellData cellData)
         {
-            crossPlayerState = !crossPlayerState;
             TableController.Instance.OnCellPressed(cellData);
+
+            crossPlayerState = !crossPlayerState;
+
+            UIController.Instance.ChangePlayer(CurrentCellMark);
 
             CheckTableState();
         }

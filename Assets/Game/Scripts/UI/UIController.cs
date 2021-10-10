@@ -9,6 +9,7 @@ namespace Game.UI
         void Initialize();
         void NoUsefulMoves();
         void GetWinner(ECellState winnerType);
+        void ChangePlayer(ECellState nextPlayer);
     }
 
     public class UIController : MonoBehaviour, IUIController
@@ -34,6 +35,7 @@ namespace Game.UI
         public void Initialize()
         {
             _uIView = UIView.Current;
+            ChangePlayer(ECellState.Cross);
         }
 
         public void NoUsefulMoves()
@@ -49,6 +51,14 @@ namespace Game.UI
 
             _uIView.WinnerScreen.SetActive(true);
             _uIView.RestartButton.gameObject.SetActive(true);
+        }
+
+        public void ChangePlayer(ECellState nextPlayer)
+        {
+            bool isNextCross = nextPlayer == ECellState.Cross;
+
+            _uIView.CircleWait.SetActive(!isNextCross);
+            _uIView.CrossWait.SetActive(isNextCross);
         }
 
 #endregion
