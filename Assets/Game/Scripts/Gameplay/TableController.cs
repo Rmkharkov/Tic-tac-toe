@@ -5,45 +5,53 @@ namespace Game.Gameplay
     using Game.Cells;
     using Game.Configs;
 
-    public class TableController : MonoBehaviour
+    public interface ITableController
     {
-        public static TableController   Current;
+        void OnCellPressed(CellData cellData);
+        void Initialize();
+        void CreateTable();
+        List<CellData> Cells { get; }
+    }
 
-        [SerializeField]
-        private TableView               _tableView;
-
-        private class CellData
+    public class TableController : MonoBehaviour, ITableController
+    {
+        private static ITableController  _instance;
+        public static ITableController Instance
         {
-            public ICellItemView    CellItem;
-            public ECellState       CellState { get; private set; }
-
-            public void ChangeState(ECellState setState)
+            get
             {
-                CellState = setState;
-                CellItem.Circle.SetActive           (setState == ECellState.Circle);
-                CellItem.Cross.SetActive            (setState == ECellState.Cross);
-                CellItem.CellButton.interactable =  setState == ECellState.Empty;
+                if (_instance == null)
+                {
+                    _instance = new TableController();
+                }
+                return _instance;
             }
         }
 
-        [SerializeField]
-        private List<CellData>          Cells = new List<CellData>();
+        private ITableView              _tableView;
 
-        private void Awake()
+        private List<CellData>          _cells = new List<CellData>();
+
+#region ITableController
+
+        public List<CellData>           Cells => _cells;
+
+        public void OnCellPressed(CellData cellData)
         {
-            Current = this;
+            cellData.ChangeState(PickSellsLogic.CurrentCellMark);
         }
 
-        private void Start()
+        public void Initialize()
         {
+            _tableView = TableView.Current;
             CreateTable();
         }
 
-        void CreateTable()
+        public void CreateTable()
         {
-            if (Cells != null && Cells.Count > 0)
+            if (_cells != null && _cells.Count > 0)
             {
-                Cells.ForEach(c => c.ChangeState(ECellState.Empty));
+                _cells.ForEach(c => c.ChangeState(ECellState.Empty));
             }
             else
             {
@@ -54,25 +62,21 @@ namespace Game.Gameplay
                         _tableView.CellsParent)
                         .GetComponent<ICellItemView>();
 
-                    Cells.Add(new CellData()
+                    _cells.Add(new CellData()
                     {
                         CellItem = cell,
                     });
 
                     int id = i;
-                    Cells[i].CellItem.CellButton.onClick.AddListener(delegate {
-                        OnCellPressed(Cells[id]);
-                        PickSellsLogic.CellTapped();
+                    _cells[i].CellItem.CellButton.onClick.AddListener(delegate {
+                        PickSellsLogic.CellTapped(_cells[id]);
                     });
 
-                    Cells[i].ChangeState(ECellState.Empty);
+                    _cells[i].ChangeState(ECellState.Empty);
                 }
             }
         }
 
-        void OnCellPressed(CellData cellData)
-        {
-            cellData.ChangeState(PickSellsLogic.CurrentCellMark);
-        }
+#endregion
     }
 }
