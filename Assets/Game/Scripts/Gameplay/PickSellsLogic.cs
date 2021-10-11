@@ -2,16 +2,19 @@ namespace Game.Gameplay
 {
     using Game.Cells;
     using Game.UI;
+    using Game.AI;
     using System.Linq;
     using System.Collections.Generic;
 
     public class PickSellsLogic
     {
         static bool crossPlayerState = true;
+        static bool someOneWon = false;
 
         public static void RefreshTable()
         {
             crossPlayerState = true;
+            someOneWon = false;
             TableController.Instance.CreateTable();
             UIController.Instance.ChangePlayer(CurrentCellMark);
         }
@@ -27,6 +30,11 @@ namespace Game.Gameplay
             UIController.Instance.ChangePlayer(CurrentCellMark);
 
             CheckTableState();
+
+            if (!crossPlayerState && !NoEmptyCells && !someOneWon)
+            {
+                AIController.Instance.CanMove();
+            }
         }
 
         private static void CheckTableState()
@@ -34,6 +42,7 @@ namespace Game.Gameplay
             if (ThreeInARow != ECellState.Empty)
             {
                 UIController.Instance.GetWinner(ThreeInARow);
+                someOneWon = true;
             }
             else if (NoEmptyCells)
             {
