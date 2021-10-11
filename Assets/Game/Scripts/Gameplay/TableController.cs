@@ -4,6 +4,7 @@ namespace Game.Gameplay
     using UnityEngine;
     using Game.Cells;
     using Game.Configs;
+    using Game.Core;
 
     public interface ITableController
     {
@@ -49,6 +50,7 @@ namespace Game.Gameplay
 
         public void CreateTable()
         {
+            List<int> savedPreviosly = SaveSystem.Instance.Load().Cells;
             if (_cells != null && _cells.Count > 0)
             {
                 _cells.ForEach(c => c.ChangeState(ECellState.Empty));
@@ -72,7 +74,16 @@ namespace Game.Gameplay
                         PickSellsLogic.CellTapped(_cells[id]);
                     });
 
-                    _cells[i].ChangeState(ECellState.Empty);
+                    ECellState setState = ECellState.Empty;
+                    if (savedPreviosly != null && savedPreviosly.Count > 0)
+                    {
+                        setState = (ECellState)savedPreviosly[i];
+                    }
+                    _cells[i].ChangeState(setState);
+                }
+                if (!SaveSystem.Instance.Load().CrossPlayerState)
+                {
+                    PickSellsLogic.AIMove();
                 }
             }
         }

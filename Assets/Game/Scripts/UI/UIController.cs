@@ -35,7 +35,8 @@ namespace Game.UI
         public void Initialize()
         {
             _uIView = UIView.Current;
-            ChangePlayer(ECellState.Cross);
+            ECellState startState = PickSellsLogic.crossPlayerState ? ECellState.Cross : ECellState.Circle;
+            ChangePlayer(startState);
         }
 
         public void NoUsefulMoves()

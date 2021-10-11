@@ -1,11 +1,9 @@
-namespace Game.Gameplay
+namespace Game.Cells
 {
-    using Game.Cells;
-
+    [System.Serializable]
     public class CellData
     {
         public ICellItemView CellItem;
-        public ECellState debState;
         public ECellState CellState { get; private set; }
 
         public void ChangeState(ECellState setState)
@@ -14,7 +12,6 @@ namespace Game.Gameplay
             CellItem.Circle.SetActive(setState == ECellState.Circle);
             CellItem.Cross.SetActive(setState == ECellState.Cross);
             CellItem.CellButton.interactable = setState == ECellState.Empty;
-            debState = setState;
         }
     }
 }
