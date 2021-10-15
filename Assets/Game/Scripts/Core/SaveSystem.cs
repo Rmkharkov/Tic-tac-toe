@@ -1,17 +1,13 @@
 namespace Game.Core
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using UnityEngine;
-    using Game.Cells;
-    using Game.Gameplay;
-    using System.Linq;
+    using SavingCore;
 
     public interface ISaveSystem
     {
-        void Save();
-        void RefreshSave();
-        SaveData Load();
+        void        Save();
+        void        RefreshSave();
+        SaveData    Load();
     }
 
     public class SaveSystem : MonoBehaviour, ISaveSystem
@@ -31,6 +27,9 @@ namespace Game.Core
 
         private SaveData    _loadedData = null;
         private string      _saveId = "gameSave";
+
+#region ISaveSystem
+
         SaveData            _currentSave => SaveProfile.Instance.SaveData;
 
         public void Save()
@@ -57,5 +56,7 @@ namespace Game.Core
 
             return _currentSave;
         }
+
+#endregion
     }
 }

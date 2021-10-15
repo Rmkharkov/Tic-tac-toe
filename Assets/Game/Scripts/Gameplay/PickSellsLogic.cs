@@ -9,18 +9,21 @@ namespace Game.Gameplay
 
     public class PickSellsLogic
     {
-        static bool someOneWon = false;
-        static SaveData _currentSave => SaveProfile.Instance.SaveData;
+        static bool                 _someOneWon = false;
+
+        static SaveData             _currentSave => SaveProfile.Instance.SaveData;
+
+#region Public Access
+
+        public static ECellState    CurrentCellMark => _currentSave.CrossPlayerState.Value ? ECellState.Cross : ECellState.Circle;
 
         public static void RefreshTable()
         {
             _currentSave.CrossPlayerState.Value = true;
-            someOneWon = false;
-            TableController.Instance.CreateTable();
+            _someOneWon = false;
+            TableController.Instance.TableReset.Execute();
             UIController.Instance.ChangePlayer(CurrentCellMark);
         }
-
-        public static ECellState CurrentCellMark => _currentSave.CrossPlayerState.Value ? ECellState.Cross : ECellState.Circle;
 
         public static void CellTapped(int cellDataId)
         {
@@ -39,11 +42,15 @@ namespace Game.Gameplay
 
         public static void AIMove()
         {
-            if (!_currentSave.CrossPlayerState.Value && !NoEmptyCells && !someOneWon)
+            if (!_currentSave.CrossPlayerState.Value && !NoEmptyCells && !_someOneWon)
             {
                 AIController.Instance.CanMove();
             }
         }
+
+#endregion
+
+#region CheckGameOver
 
         private static bool CheckTableEndState
         {
@@ -52,7 +59,7 @@ namespace Game.Gameplay
                 if (ThreeInARow != ECellState.Empty)
                 {
                     UIController.Instance.GetWinner(ThreeInARow);
-                    someOneWon = true;
+                    _someOneWon = true;
                     SaveSystem.Instance.RefreshSave();
                     return true;
                 }
@@ -172,5 +179,7 @@ namespace Game.Gameplay
                 return false;
             }
         }
+
+#endregion
     }
 }

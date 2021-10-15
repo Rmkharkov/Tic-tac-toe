@@ -2,15 +2,14 @@ namespace Game.UI
 {
     using UnityEngine;
     using Game.Cells;
-    using Game.Gameplay;
     using Game.Core;
 
     public interface IUIController
     {
-        void Initialize();
-        void NoUsefulMoves();
-        void GetWinner(ECellState winnerType);
-        void ChangePlayer(ECellState nextPlayer);
+        void    Initialize();
+        void    NoUsefulMoves();
+        void    GetWinner(ECellState winnerType);
+        void    ChangePlayer(ECellState nextPlayer);
     }
 
     public class UIController : MonoBehaviour, IUIController
@@ -29,6 +28,7 @@ namespace Game.UI
         }
 
         private IUIView         _uIView;
+
         private bool            _restartButtonSubscribed;
 
 #region IUIController

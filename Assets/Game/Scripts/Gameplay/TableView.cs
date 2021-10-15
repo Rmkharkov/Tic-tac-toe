@@ -14,7 +14,11 @@ namespace Game.Gameplay
         [SerializeField]
         private Transform       _cellsParent;
 
-        public Transform CellsParent => _cellsParent;
+#region ITableView
+
+        public Transform        CellsParent => _cellsParent;
+
+#endregion
 
         private void Awake()
         {

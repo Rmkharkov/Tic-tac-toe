@@ -17,7 +17,6 @@ namespace Game.Configs
     [CreateAssetMenu(fileName = "PrefabsLoaderConfig", menuName = "Configs/PrefabsLoaderConfig")]
     public class PrefabsLoaderConfig : ScriptableObject
     {
-
         private static PrefabsLoaderConfig _instance;
         public static PrefabsLoaderConfig Instance
         {

@@ -9,8 +9,8 @@ namespace Game.Core
     [System.Serializable]
     public class SaveData
     {
-        public IntReactiveProperty[] Cells = new IntReactiveProperty[9];
-        public BoolReactiveProperty CrossPlayerState    = new BoolReactiveProperty();
+        public IntReactiveProperty[]    Cells = new IntReactiveProperty[9];
+        public BoolReactiveProperty     CrossPlayerState    = new BoolReactiveProperty();
     }
 
     public interface ISaveProfile

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2440fca89d78eb4daf9db8084281863, type: 3}
+  m_Name: AICharactersLoaderConfig
+  m_EditorClassIdentifier: 
+  _characters:
+  - AIType: 1
+    CharacterSource: {fileID: 11400000, guid: 7359530dc0ba8dc46805d643919b967f, type: 2}
+  - AIType: 2
+    CharacterSource: {fileID: 11400000, guid: b5a8261bd7bd295409102f931224549b, type: 2}

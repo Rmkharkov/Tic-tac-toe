@@ -8,13 +8,13 @@ namespace Game.UI
 
     public interface IUIView
     {
-        GameObject NoMovesScreen { get; }
-        GameObject WinnerScreen { get; }
-        GameObject CrossWait { get; }
-        GameObject CircleWait { get; }
-        Button RestartButton { get; }
-        Text WinnerDescriptionText { get; }
-        void ShowAIWait(Action onEnd);
+        GameObject      NoMovesScreen           { get; }
+        GameObject      WinnerScreen            { get; }
+        GameObject      CrossWait               { get; }
+        GameObject      CircleWait              { get; }
+        Button          RestartButton           { get; }
+        Text            WinnerDescriptionText   { get; }
+        void            ShowAIWait(Action onEnd);
     }
 
     public class UIView : MonoBehaviour, IUIView
@@ -44,17 +44,17 @@ namespace Game.UI
 
 #region IUIView
 
-        public GameObject NoMovesScreen =>      _noMovesScreen;
+        public GameObject       NoMovesScreen           => _noMovesScreen;
 
-        public GameObject WinnerScreen =>       _winnerScreen;
+        public GameObject       WinnerScreen            => _winnerScreen;
 
-        public Text WinnerDescriptionText =>    _winnerDescriptionText;
+        public Text             WinnerDescriptionText   => _winnerDescriptionText;
 
-        public Button RestartButton =>          _restartButton;
+        public Button           RestartButton           => _restartButton;
 
-        public GameObject CrossWait =>          _crossWait;
+        public GameObject       CrossWait               => _crossWait;
 
-        public GameObject CircleWait =>         _circleWait;
+        public GameObject       CircleWait              => _circleWait;
 
         public void ShowAIWait(Action onEnd)
         {

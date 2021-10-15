@@ -7,9 +7,9 @@ namespace Game.Cells
 
     public interface ICellItemView
     {
-        Button CellButton       { get; }
-        GameObject Cross        { get; }
-        GameObject Circle       { get; }
+        Button      CellButton  { get; }
+        GameObject  Cross       { get; }
+        GameObject  Circle      { get; }
     }
 
     public class CellItemView : MonoBehaviour, ICellItemView
@@ -21,10 +21,14 @@ namespace Game.Cells
         [SerializeField]
         private GameObject      _circle;
 
-        public Button CellButton => _cellButton;
+#region ICellItemView
 
-        public GameObject Cross => _cross;
+        public Button           CellButton  => _cellButton;
 
-        public GameObject Circle => _circle;
+        public GameObject       Cross       => _cross;
+
+        public GameObject       Circle      => _circle;
+
+#endregion
     }
 }

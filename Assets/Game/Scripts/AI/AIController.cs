@@ -1,18 +1,22 @@
 namespace Game.AI
 {
     using System.Collections.Generic;
+    using System;
     using UnityEngine;
-    using Game.Gameplay;
+    using Game.Core;
+    using Game.Configs;
     using Game.Cells;
     using Game.UI;
-    using System.Linq;
+    using Game.Gameplay;
+    using UniRx;
 
     public interface IAIController
     {
-        void CanMove();
+        void        Initialize();
+        void        CanMove();
     }
 
-    public class AIController : MonoBehaviour, IAIController
+    public class AIController : MonoBehaviour, IAIController, IDisposable
     {
         private static IAIController _instance;
         public static IAIController Instance
@@ -27,8 +31,11 @@ namespace Game.AI
             }
         }
 
-        private List<CellData>  _cells = new List<CellData>();
-        private float           _delayWaitTimer;
+        private List<CellData>          _cells = new List<CellData>();
+        private float                   _delayWaitTimer;
+        private AICharacterBase         _currentAI;
+
+        readonly CompositeDisposable    _lifetimeDisposables = new CompositeDisposable();
 
 #region IAIController
 
@@ -37,135 +44,29 @@ namespace Game.AI
             UIView.Current.ShowAIWait(delegate { DoMoveOnCell(); });
         }
 
+        public void Initialize()
+        {
+            TableController.Instance.TableReset
+                .Subscribe(_ => RepickAI())
+                .AddTo(_lifetimeDisposables);
+
+            RepickAI();
+        }
+
 #endregion
 
         void DoMoveOnCell()
         {
-            _cells = TableController.Instance.Cells;
-
-            CellData moveCell = TwoCellsInRow;
-
-            if (moveCell == null)
-            {
-                if (_cells[4].CellState == ECellState.Empty)
-                {
-                    moveCell = _cells[4];
-                }
-                else
-                {
-                    moveCell = _cells
-                    .Where(c => c.CellState == ECellState.Empty)
-                    .First();
-                }
-            }
+            CellData moveCell = _currentAI.CellMoveSolution;
 
             moveCell.CellItem.CellButton.onClick.Invoke();
         }
 
-
-        private CellData TwoCellsInRow
+        private void RepickAI()
         {
-            get
-            {
-                int to_returnId = -1;
-                for (int i = 0; i < 3; i++)
-                {
-                    int[] idsH = {
-                        i * 3,
-                        i * 3 + 1,
-                        i * 3 + 2
-                    };
-
-                    ECellState[] horzStates = new ECellState[]
-                    {
-                        _cells[idsH[0]].CellState,
-                        _cells[idsH[1]].CellState,
-                        _cells[idsH[2]].CellState
-                    };
-
-                    to_returnId = LineNeedsStep(horzStates);
-                    if (to_returnId >= 0)
-                    {
-                        return _cells[idsH[to_returnId]];
-                    }
-
-                    int[] idsV = 
-                    {
-                        i,
-                        i + 3,
-                        i + 6
-                    };
-                    ECellState[] vertStates = new ECellState[]
-                    {
-                        _cells[idsV[0]].CellState,
-                        _cells[idsV[0]].CellState,
-                        _cells[idsV[0]].CellState
-                    };
-
-                    to_returnId = LineNeedsStep(vertStates);
-                    if (to_returnId >= 0)
-                    {
-                        return _cells[idsV[to_returnId]];
-                    }
-                }
-
-                ECellState[] diag1States = new ECellState[]
-                {
-                        _cells[0].CellState,
-                        _cells[4].CellState,
-                        _cells[8].CellState
-                };
-
-                to_returnId = LineNeedsStep(diag1States);
-                if (to_returnId >= 0)
-                {
-                    return _cells[to_returnId * 4];
-                }
-
-                ECellState[] diag2States = new ECellState[]
-                {
-                        _cells[2].CellState,
-                        _cells[4].CellState,
-                        _cells[6].CellState
-                };
-
-                to_returnId = LineNeedsStep(diag2States);
-                if (to_returnId >= 0)
-                {
-                    return _cells[2 + to_returnId * 2];
-                }
-
-                return null;
-            }
+            _currentAI = AICharactersLoaderConfig.Instance.GetRandomAI;
         }
 
-        private int LineNeedsStep(ECellState[] states)
-        {
-            bool isCircles = states.Contains(ECellState.Circle);
-            bool isCrosses = states.Contains(ECellState.Cross);
-            if (isCircles != isCrosses)
-            {
-                int total = 0;
-                int emptyId = -1;
-                for(int i = 0; i < states.Length; i++)
-                {
-                    if (states[i] != ECellState.Empty)
-                    {
-                        total++;
-                    }
-                    else
-                    {
-                        emptyId = i;
-                    }
-                }
-
-                if (total == 2)
-                {
-                    return emptyId;
-                }
-            }
-
-            return -1;
-        }
+        public void Dispose() => _lifetimeDisposables.Clear();
     }
 }
