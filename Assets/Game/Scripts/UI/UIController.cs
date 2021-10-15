@@ -3,6 +3,7 @@ namespace Game.UI
     using UnityEngine;
     using Game.Cells;
     using Game.Gameplay;
+    using Game.Core;
 
     public interface IUIController
     {
@@ -35,7 +36,7 @@ namespace Game.UI
         public void Initialize()
         {
             _uIView = UIView.Current;
-            ECellState startState = PickSellsLogic.crossPlayerState ? ECellState.Cross : ECellState.Circle;
+            ECellState startState = SaveProfile.Instance.SaveData.CrossPlayerState.Value ? ECellState.Cross : ECellState.Circle;
             ChangePlayer(startState);
         }
 

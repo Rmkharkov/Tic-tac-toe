@@ -5,16 +5,17 @@ namespace Game.Gameplay
     using Game.Cells;
     using Game.Configs;
     using Game.Core;
+    using UniRx;
+    using System;
 
     public interface ITableController
     {
-        void OnCellPressed(CellData cellData);
         void Initialize();
         void CreateTable();
         List<CellData> Cells { get; }
     }
 
-    public class TableController : MonoBehaviour, ITableController
+    public class TableController : MonoBehaviour, ITableController, IDisposable
     {
         private static ITableController  _instance;
         public static ITableController Instance
@@ -33,14 +34,11 @@ namespace Game.Gameplay
 
         private List<CellData>          _cells = new List<CellData>();
 
+        SaveData                        _currentSave => SaveProfile.Instance.SaveData;
+
 #region ITableController
 
         public List<CellData>           Cells => _cells;
-
-        public void OnCellPressed(CellData cellData)
-        {
-            cellData.ChangeState(PickSellsLogic.CurrentCellMark);
-        }
 
         public void Initialize()
         {
@@ -50,14 +48,13 @@ namespace Game.Gameplay
 
         public void CreateTable()
         {
-            List<int> savedPreviosly = SaveSystem.Instance.Load().Cells;
             if (_cells != null && _cells.Count > 0)
             {
-                _cells.ForEach(c => c.ChangeState(ECellState.Empty));
+                _cells.ForEach(c => c.ChangeState((int)ECellState.Empty));
             }
             else
             {
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < _currentSave.Cells.Length; i++)
                 {
                     ICellItemView cell = Instantiate(
                         PrefabsLoaderConfig.Instance.GetPrefab(Prefabs.EGameplayPrefab.Cell), 
@@ -71,23 +68,24 @@ namespace Game.Gameplay
 
                     int id = i;
                     _cells[i].CellItem.CellButton.onClick.AddListener(delegate {
-                        PickSellsLogic.CellTapped(_cells[id]);
+                        PickSellsLogic.CellTapped(id);
                     });
-
-                    ECellState setState = ECellState.Empty;
-                    if (savedPreviosly != null && savedPreviosly.Count > 0)
-                    {
-                        setState = (ECellState)savedPreviosly[i];
-                    }
-                    _cells[i].ChangeState(setState);
+                    _currentSave.Cells[id]
+                        .Subscribe(_cells[id].ChangeState)
+                        .AddTo(_lifetimeDisposables);
                 }
-                if (!SaveSystem.Instance.Load().CrossPlayerState)
+                if (!_currentSave.CrossPlayerState.Value)
                 {
                     PickSellsLogic.AIMove();
                 }
             }
         }
 
+        public void Dispose() => _lifetimeDisposables.Clear();
+
 #endregion
+
+        readonly CompositeDisposable _lifetimeDisposables = new CompositeDisposable();
+
     }
 }

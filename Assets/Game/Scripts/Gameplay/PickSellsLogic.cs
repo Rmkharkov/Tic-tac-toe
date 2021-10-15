@@ -9,24 +9,24 @@ namespace Game.Gameplay
 
     public class PickSellsLogic
     {
-        public static bool crossPlayerState = true;
         static bool someOneWon = false;
+        static SaveData _currentSave => SaveProfile.Instance.SaveData;
 
         public static void RefreshTable()
         {
-            crossPlayerState = true;
+            _currentSave.CrossPlayerState.Value = true;
             someOneWon = false;
             TableController.Instance.CreateTable();
             UIController.Instance.ChangePlayer(CurrentCellMark);
         }
 
-        public static ECellState CurrentCellMark => crossPlayerState ? ECellState.Cross : ECellState.Circle;
+        public static ECellState CurrentCellMark => _currentSave.CrossPlayerState.Value ? ECellState.Cross : ECellState.Circle;
 
-        public static void CellTapped(CellData cellData)
+        public static void CellTapped(int cellDataId)
         {
-            TableController.Instance.OnCellPressed(cellData);
+            _currentSave.Cells[cellDataId].Value = (int)CurrentCellMark;
 
-            crossPlayerState = !crossPlayerState;
+            _currentSave.CrossPlayerState.Value = !_currentSave.CrossPlayerState.Value;
 
             UIController.Instance.ChangePlayer(CurrentCellMark);
 
@@ -39,7 +39,7 @@ namespace Game.Gameplay
 
         public static void AIMove()
         {
-            if (!crossPlayerState && !NoEmptyCells && !someOneWon)
+            if (!_currentSave.CrossPlayerState.Value && !NoEmptyCells && !someOneWon)
             {
                 AIController.Instance.CanMove();
             }
@@ -156,9 +156,6 @@ namespace Game.Gameplay
                 }
 
                 return true;
-                //return TableController.Current.Cells
-                //    .Where(c => c.CellState == ECellState.Empty)
-                //    .First() == null;
             }
         }
 

@@ -6,12 +6,13 @@ namespace Game.Cells
         public ICellItemView CellItem;
         public ECellState CellState { get; private set; }
 
-        public void ChangeState(ECellState setState)
+        public void ChangeState(int setStateInt)
         {
-            CellState = setState;
-            CellItem.Circle.SetActive(setState == ECellState.Circle);
-            CellItem.Cross.SetActive(setState == ECellState.Cross);
-            CellItem.CellButton.interactable = setState == ECellState.Empty;
+            UnityEngine.Debug.LogError(setStateInt);
+            CellState = (ECellState)setStateInt;
+            CellItem.Circle.SetActive(CellState == ECellState.Circle);
+            CellItem.Cross.SetActive(CellState == ECellState.Cross);
+            CellItem.CellButton.interactable = CellState == ECellState.Empty;
         }
     }
 }
